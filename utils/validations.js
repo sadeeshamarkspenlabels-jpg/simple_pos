@@ -1,0 +1,18 @@
+import {z} from "zod";
+
+export const loginValidations = z.object({
+  username: z.string().nonempty("Username is Required"),
+  password: z.string().nonempty("Password is Required")
+})
+
+export const productValidate = z.object({
+  id: z.string().nonempty("Id is Required"),
+  name: z.string().nonempty("Name is Required"),
+  price: z.string().nonempty("Price is Required")
+})
+
+export const userValidate = z.object({
+  username: z.string().nonempty("Username is Required"),
+  password: z.string().nonempty("Password is Required"),
+  role: z.string().nonempty("Role is Required")
+})
