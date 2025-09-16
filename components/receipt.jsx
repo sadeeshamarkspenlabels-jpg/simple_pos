@@ -1,10 +1,19 @@
+import Image from "next/image";
+
 export default function ThermalReceipt({ sale }) {
   return (
-    <div className="receipt mx-auto print:w-[80mm] w-[80mm] p-2 text-xs font-mono">
+    <div className="receipt mx-auto print:w-[80mm] w-[80mm] p-2 text-[12px] font-mono">
       {/* Shop Header */}
-      <h1 className="text-center font-bold text-base">My Shop</h1>
-      <p className="text-center">123 Main Street</p>
-      <p className="text-center">Tel: 077-1234567</p>
+      <div className=" flex justify-center">
+        <img src="/bill.svg" alt="" className="w-[100px] h-[100px]" />
+      </div>
+      <div>
+        <h1 className="text-center font-bold text-base">PRADEEP FOOD CENTRE</h1>
+        <h1 className="text-center font-bold text-base">ERANDAWALA,</h1>
+        <h1 className="text-center font-bold text-base">KURUWITA</h1>
+      </div>
+      {/* <p className="text-center">123 Main Street</p> */}
+      <p className="text-center">Tel: 045-2263129</p>
       <hr className="border-dashed border-gray-400 my-2" />
 
       <div className=" my-4">
@@ -38,15 +47,20 @@ export default function ThermalReceipt({ sale }) {
       <hr className="border-dashed border-gray-400 my-2" />
 
       {/* Totals */}
-      <p className="text-right font-bold">
-        Total:{" "}
-        {sale.items
-          .reduce((sum, i) => sum + i.price * i.quantity, 0)
-          .toFixed(2)}
-      </p>
+      <div className=" flex justify-between">
+        <p className="text-right font-bold">Total:</p>
+        <p className="text-right font-bold">
+          {sale.items
+            .reduce((sum, i) => sum + i.price * i.quantity, 0)
+            .toFixed(2)}
+        </p>
+      </div>
 
       {/* Footer */}
-      <p className="text-center mt-4">Thank you! Come again 🙏</p>
+      <p className="text-center mt-4 font-bold">Thank you! Come again</p>
+      <p className="text-center text-[10px] mt-2">
+        Developed by Markspenlabels
+      </p>
     </div>
   );
 }

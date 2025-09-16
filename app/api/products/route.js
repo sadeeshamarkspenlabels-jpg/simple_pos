@@ -29,6 +29,19 @@ export async function POST(req) {
 
   const { name, price, id } = await req.json();
   if (!name || !price) return NextResponse.json({ message: "Name and price required" }, { status: 400 });
-  const product = await Product.create({ name, price: Number(price), pId: Number(id) });
-  return NextResponse.json(product);
+  try {
+  const product = await Product.create({
+    name,
+    price: Number(price),
+    pId: Number(id),
+  });
+
+  return NextResponse.json(product, { status: 201 });
+} catch (error) {
+  return NextResponse.json(
+    { message: "Duplicate Product ID" },
+    { status: 500 }
+  );
+}
+
 }

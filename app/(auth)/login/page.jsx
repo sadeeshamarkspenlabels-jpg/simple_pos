@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -60,6 +60,18 @@ const page = () => {
     }
     console.log(data);
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role")
+    if(token) {
+      if(role === "admin") {
+        router.push("/products");
+      } else {
+        router.push("/sale")
+      }
+    }
+  }, [])
 
   return (
     <Form {...form}>

@@ -51,6 +51,8 @@ const UserPage = () => {
   const [createLoading, setCreateLoading] = useState(false);
   const [loading, setLoading] = useState(false);  
 
+  const router = useRouter();
+
   const form = useForm({
     resolver: zodResolver(userValidate),
     defaultValues: {
@@ -105,6 +107,11 @@ const UserPage = () => {
   };
 
   useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+      if(!savedToken) {
+        router.push("/login");
+        return;
+      }
     fetchData();
   }, []);
 

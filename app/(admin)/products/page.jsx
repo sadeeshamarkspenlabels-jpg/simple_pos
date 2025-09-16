@@ -51,6 +51,8 @@ const ProductPage = () => {
   const [createLoading, setCreateLoading] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const router = useRouter();
+
   const form = useForm({
     resolver: zodResolver(productValidate),
     defaultValues: {
@@ -94,6 +96,7 @@ const ProductPage = () => {
       fetchData();
     } catch (error) {
       console.log(error);
+      toast.error(error.response.data.message)
     } finally {
       setCreateLoading(false);
 
@@ -101,6 +104,11 @@ const ProductPage = () => {
   };
 
   useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+      if(!savedToken) {
+        router.push("/login");
+        return;
+      }
     fetchData();
   }, []);
 
