@@ -45,11 +45,12 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Loader from "@/components/loader";
 import axios from "axios";
+import { Trash } from "lucide-react";
 
 const UserPage = () => {
   const [users, setUsers] = useState([]);
   const [createLoading, setCreateLoading] = useState(false);
-  const [loading, setLoading] = useState(false);  
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
@@ -63,20 +64,19 @@ const UserPage = () => {
   });
 
   const fetchData = async () => {
-     const token = localStorage.getItem("token");
-     setLoading(true);
+    const token = localStorage.getItem("token");
+    setLoading(true);
     try {
       const res = await axios.get("/api/auth/users", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log(res);
-    setUsers(res.data);
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res);
+      setUsers(res.data);
     } catch (error) {
       console.log(error);
-      toast.error("Error Getting users")
-      
+      toast.error("Error Getting users");
     } finally {
       setLoading(false);
     }
@@ -85,18 +85,18 @@ const UserPage = () => {
   const onSubmit = async (values) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-     setCreateLoading(true);
-     const token = localStorage.getItem("token");
+    setCreateLoading(true);
+    const token = localStorage.getItem("token");
     try {
       const { userName, password, role } = values;
-     
+
       const res = await axios.post("/api/auth/register", values, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setCreateLoading(false);
-      toast.success("User Created Success")
+      toast.success("User Created Success");
       console.log(res);
       fetchData();
     } catch (error) {
@@ -108,12 +108,32 @@ const UserPage = () => {
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
-      if(!savedToken) {
-        router.push("/login");
-        return;
-      }
+    if (!savedToken) {
+      router.push("/login");
+      return;
+    }
     fetchData();
   }, []);
+
+  const handleDelete = async(id) => {
+    const token = localStorage.getItem("token");
+    toast.promise(
+      axios.delete(`/api/auth/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+      {
+        loading: "Deleting User...",
+        success: (res) => {
+          fetchData(); // ✅ call your function after success
+          return "Deleted successfully!";
+        },
+        error: (error) =>
+          error.response?.data?.message || "Something went wrong!",
+      }
+    );
+  }
 
   return (
     <section className=" flex md:flex-row flex-col w-[100%] justify-between md:px-8 md:pt-8">
@@ -129,13 +149,22 @@ const UserPage = () => {
               <TableRow>
                 <TableHead>Username</TableHead>
                 <TableHead>Role</TableHead>
+                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {users.map((user, i) => (
                 <TableRow key={i}>
-                    <TableCell>{user.username}</TableCell>
-                    <TableCell>{user.role}</TableCell>
+                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.role}</TableCell>
+                  <TableCell>
+                    <Button
+                      onClick={() => handleDelete(user._id)}
+                      className=" bg-red-500 hover:bg-red-600"
+                    >
+                      <Trash />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
