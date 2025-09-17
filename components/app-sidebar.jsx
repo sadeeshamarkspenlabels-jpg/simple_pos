@@ -7,6 +7,7 @@ import {
   Box,
   User,
   LogOut,
+  Hand
 } from "lucide-react";
 
 import {
@@ -41,11 +42,11 @@ const items = [
     url: "/users",
     icon: User,
   },
-  // {
-  //   title: "Search",
-  //   url: "#",
-  //   icon: Search,
-  // },
+  {
+    title: "Sales",
+    url: "/sales",
+    icon: Hand,
+  },
   // {
   //   title: "Settings",
   //   url: "#",

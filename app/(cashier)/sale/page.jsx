@@ -7,10 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Trash } from "lucide-react";
+import { Trash, Printer } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import Loader from "@/components/loader";
+import toast from "react-hot-toast";
+import PopUp from "@/components/PopUp";
 
 export default function CashierPage() {
-
   const router = useRouter();
 
   const [products, setProducts] = useState([]);
@@ -21,11 +24,15 @@ export default function CashierPage() {
   const [productIdInput, setProductIdInput] = useState("");
   const [cashReceived, setCashReceived] = useState("");
   const [changeDue, setChangeDue] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [reprintLoading, setReprintLoading] = useState(false)
+  const [reprintId, setReprintId] = useState("")
 
   useEffect(() => {
     const fetchProducts = async () => {
       const savedToken = localStorage.getItem("token");
-      if(!savedToken) {
+      if (!savedToken) {
         router.push("/login");
         return;
       }
@@ -86,7 +93,7 @@ export default function CashierPage() {
       addToCart(product);
       setProductIdInput("");
     } else {
-      alert("Product not found");
+      toast.error("Product Not Found");
     }
   };
 
@@ -99,10 +106,10 @@ export default function CashierPage() {
   }, [cashReceived, cart]);
 
   const completeSale = async () => {
-    if (cart.length === 0) return alert("Cart is empty");
+    if (cart.length === 0) return toast.error("Cart is Empty");
     const cash = parseFloat(cashReceived) || 0;
-    if (cash < total) return alert("Cash received is less than total");
-
+    if (cash < total) return toast.error("Cash received is less than total");
+    setLoading(true);
     try {
       const res = await axios.post(
         "/api/sales",
@@ -124,25 +131,60 @@ export default function CashierPage() {
       setTimeout(() => window.print(), 300);
     } catch (err) {
       console.error("Error completing sale:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleLogout = () => {
     localStorage.clear("token");
-    localStorage.clear("role")
-    router.push("/login")
-  }
+    localStorage.clear("role");
+    router.push("/login");
+  };
 
   const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const onClose = () => {
+    setIsOpen(false)
+  }
+
+  const handleReprint = async() => {
+    if(reprintId === "") return toast.error("Invoice Number is empty");
+    setReprintLoading(true);
+    try {
+      const res = await axios.get(
+        `/api/sales/${reprintId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log(res);
+      setSale(res.data.sale)
+      setTimeout(() => window.print(), 300);
+      onClose();
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message)
+    } finally {
+      setReprintLoading(false)
+      setReprintId("")
+    }
+  }
+
   return (
     <div>
       {/* POS UI - hidden in print */}
       <div className="flex md:flex-row flex-col h-screen no-print">
+        <PopUp isOpen={isOpen} onClose={onClose} title="Reprint">
+          <Input placeholder="Invoie Number : INV0000" onChange={(e) => setReprintId(e.target.value)}/>
+          <Button className="w-full mt-4" onClick={handleReprint}>
+            {
+              reprintLoading ? <Loader /> : "Print"
+            }
+          </Button>
+        </PopUp>
         {/* Products List */}
-        <div className="md:w-2/3 p-4 border-r overflow-y-auto">
+        <div className="md:w-2/3 p-4 border-r">
           <h1 className="text-xl font-bold mb-2">Products</h1>
           <Input
             placeholder="Search product..."
@@ -150,26 +192,35 @@ export default function CashierPage() {
             onChange={(e) => setSearch(e.target.value)}
             className="mb-2"
           />
-          <div className="grid grid-cols-3 gap-4">
-            {filteredProducts.map((p) => (
-              <div
-                key={p._id}
-                className="p-4 border rounded shadow hover:bg-gray-100 cursor-pointer"
-                onClick={() => addToCart(p)}
-              >
-                <h2 className="font-semibold">{p.name}</h2>
-                <p>Rs.{p.price}</p>
-                <p className=" text-gray-400">ID: {p.pId}</p>
-              </div>
-            ))}
-          </div>
+          <ScrollArea className="h-[85vh]">
+            <div className="grid grid-cols-3 gap-4">
+              {filteredProducts.map((p) => (
+                <div
+                  key={p._id}
+                  className="p-4 border rounded shadow hover:bg-gray-100 cursor-pointer"
+                  onClick={() => addToCart(p)}
+                >
+                  <h2 className="font-semibold">{p.name}</h2>
+                  <p>Rs.{p.price}</p>
+                  <p className=" text-gray-400">ID: {p.pId}</p>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
         </div>
 
         {/* Cart Section */}
         <div className="md:w-1/3 p-4 flex flex-col">
           <div className=" flex justify-between pb-4">
             <h1 className="text-xl font-bold mb-2">Cart</h1>
-            <LogOut onClick={handleLogout} className=" text-white bg-red-500 p-2 rounded-full cursor-pointer hover:bg-white border border-red-500 hover:text-red-500 duration-300" size={40}/>
+            <div className=" flex gap-3">
+              <Printer onClick={() => setIsOpen(true)} size={40} className=" text-white bg-blue-500 p-2 rounded-full cursor-pointer hover:bg-white border border-blue-500 hover:text-blue-500 duration-300"/>
+              <LogOut
+              onClick={handleLogout}
+              className=" text-white bg-red-500 p-2 rounded-full cursor-pointer hover:bg-white border border-red-500 hover:text-red-500 duration-300"
+              size={40}
+            />
+            </div>
           </div>
 
           {/* Quick Add by Product ID */}
@@ -192,7 +243,10 @@ export default function CashierPage() {
             </div>
 
             {cart.map((item, i) => (
-              <div key={i} className="grid md:grid-cols-5 grid-cols-4 items-center mb-1">
+              <div
+                key={i}
+                className="grid md:grid-cols-5 grid-cols-4 items-center mb-1"
+              >
                 <span>{item.name}</span>
                 <span className="flex items-center gap-1">
                   <Button
@@ -242,7 +296,7 @@ export default function CashierPage() {
               </p>
             </div>
             <Button onClick={completeSale} className="w-full mt-2" size="lg">
-              Complete Sale
+              {loading ? <Loader /> : "Complete Sale"}
             </Button>
           </div>
         </div>

@@ -45,6 +45,8 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Loader from "@/components/loader";
 import axios from "axios";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Trash } from "lucide-react";
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
@@ -82,36 +84,60 @@ const ProductPage = () => {
     setCreateLoading(true);
     try {
       const { name, id, price } = values;
-      const res = await axios.post("/api/products", {
-        id,
-        name,
-        price
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await axios.post(
+        "/api/products",
+        {
+          id,
+          name,
+          price,
         },
-      },);
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       toast.success("Product Added Success");
       console.log(res);
       fetchData();
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message)
+      toast.error(error.response.data.message);
     } finally {
       setCreateLoading(false);
-
     }
   };
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
-      if(!savedToken) {
-        router.push("/login");
-        return;
-      }
+    if (!savedToken) {
+      router.push("/login");
+      return;
+    }
     fetchData();
   }, []);
 
+  const handleDelete = async (id) => {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    const token = localStorage.getItem("token");
+    toast.promise(
+      axios.delete(`/api/products/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+      {
+        loading: "Deleting product...",
+        success: (res) => {
+          fetchData(); // ✅ call your function after success
+          return "Deleted successfully!";
+        },
+        error: (error) =>
+          error.response?.data?.message || "Something went wrong!",
+      }
+    );
+  };
   return (
     <section className=" flex md:flex-row flex-col w-[100%] justify-between md:px-8 md:pt-8">
       <div className="md:w-[55%]">
@@ -120,28 +146,39 @@ const ProductPage = () => {
             <Loader color={"blue"} />
           </div>
         ) : (
-          <Table>
-            <TableCaption>List of All the Products</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Price (Rs.)</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {products.map((product, i) => (
-                <TableRow key={i}>
-                  <TableCell>{product.pId}</TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.price}</TableCell>
+          <ScrollArea className="h-[80vh]">
+            <Table>
+              <TableCaption>List of All the Products</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Price (Rs.)</TableHead>
+                  <TableHead>Action</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {products.map((product, i) => (
+                  <TableRow key={i}>
+                    <TableCell>{product.pId}</TableCell>
+                    <TableCell>{product.name}</TableCell>
+                    <TableCell>{product.price}</TableCell>
+                    <TableCell>
+                      <Button
+                        onClick={() => handleDelete(product._id)}
+                        className=" bg-red-500 hover:bg-red-600"
+                      >
+                        <Trash />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ScrollArea>
         )}
       </div>
-      <div className="flex md:justify-end justify-center  md:w-[60%] md:ml-auto">
+      <div className="flex md:justify-end justify-center  md:w-[60%] md:ml-auto self-start">
         <Card className="w-full md:max-w-[600px] flex ">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

@@ -4,6 +4,39 @@ import Sale from "@/models/Sale";
 import Product from "@/models/Product";
 import jwt from "jsonwebtoken";
 
+export async function GET(req) {
+  await dbConnect();
+  const authHeader = req.headers.get("authorization");
+  if (!authHeader)
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+  const token = authHeader.split(" ")[1]; // "Bearer <token>"
+  if (!token)
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== "admin") {
+      return NextResponse.json(
+        { message: "Only admin can delete products" },
+        { status: 403 }
+      );
+    }
+  } catch (err) {
+    return NextResponse.json({ message: "Invalid token" }, { status: 401 });
+  }
+
+  try {
+    const sales = await Sale.find();
+    return NextResponse.json(sales);
+  } catch (error) {
+    return NextResponse.json(
+        { message: "Internal Server Error" },
+        { status: 500 }
+      );
+  }
+}
+
 export async function POST(req) {
   await dbConnect();
 
