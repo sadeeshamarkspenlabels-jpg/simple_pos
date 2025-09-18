@@ -46,7 +46,6 @@ const ProductPage = () => {
   const form = useForm({
     resolver: zodResolver(productValidate),
     defaultValues: {
-      id: "",
       name: "",
       price: "",
     },
@@ -81,7 +80,7 @@ const ProductPage = () => {
     try {
       await axios.post(
         "/api/products",
-        { id: values.id, name: values.name, price: values.price },
+        { name: values.name, price: values.price },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success("Product Added Successfully");
@@ -121,7 +120,7 @@ const ProductPage = () => {
     }
 
     if (searchId.trim()) {
-      filtered = filtered.filter((p) => p.pId.toString().includes(searchId));
+      filtered = filtered.filter((p) => p._id.toString().includes(searchId));
     }
 
     if (minPrice) {
@@ -208,7 +207,7 @@ const ProductPage = () => {
               <TableBody>
                 {filteredProducts.map((product, i) => (
                   <TableRow key={i}>
-                    <TableCell>{product.pId}</TableCell>
+                    <TableCell>{product._id}</TableCell>
                     <TableCell>{product.name}</TableCell>
                     <TableCell>{product.price}</TableCell>
                     <TableCell>
@@ -239,19 +238,6 @@ const ProductPage = () => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="flex flex-col gap-4"
               >
-                <FormField
-                  control={form.control}
-                  name="id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>ID</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="name"

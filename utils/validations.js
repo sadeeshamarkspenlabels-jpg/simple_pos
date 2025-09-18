@@ -6,7 +6,6 @@ export const loginValidations = z.object({
 })
 
 export const productValidate = z.object({
-  id: z.string().nonempty("Id is Required"),
   name: z.string().nonempty("Name is Required"),
   price: z.string().nonempty("Price is Required")
 })

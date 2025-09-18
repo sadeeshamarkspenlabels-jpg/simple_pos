@@ -5,8 +5,8 @@ const SaleSchema = new mongoose.Schema({
   _id: { type: String }, // custom invoice ID: INVxxxx
   items: [
     {
-      productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
-      pId: { type: Number, required: true },
+      productId: { type: Number, ref: "Product", required: true },
+      _id: { type: Number, required: true },
       name: String,
       price: Number,
       quantity: { type: Number, default: 1 },

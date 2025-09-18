@@ -78,12 +78,12 @@ export async function POST(req) {
 
     saleItems.push({
       productId: product._id,
-      pId: product.pId,
+      _id: product._id,
       name: product.name,
       price: product.price,
       quantity: qty,
     });
-     console.log(product.pId);
+     console.log(product._id);
   }
  
   

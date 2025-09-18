@@ -39,7 +39,7 @@ export default function ThermalReceipt({ sale }) {
   {/* Items */}
   {sale.items.map((item, i) => (
     <div key={i} className="grid grid-cols-[50px_1fr_30px_50px_60px]">
-      <h3>{item.pId}</h3>
+      <h3>{item._id}</h3>
       <h3>{item.name}</h3>
       <h3 className=" mx-auto">{item.quantity}</h3>
       <h3 className=" mx-auto">{item.price}</h3>

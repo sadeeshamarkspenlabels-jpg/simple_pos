@@ -87,7 +87,7 @@ export default function CashierPage() {
 
   const addByProductId = () => {
     const product = products.find(
-      (p) => p.pId === Number(productIdInput.trim())
+      (p) => p._id === Number(productIdInput.trim())
     );
     if (product) {
       addToCart(product);
@@ -203,7 +203,7 @@ export default function CashierPage() {
                 >
                   <h2 className="font-semibold">{p.name}</h2>
                   <p>Rs.{p.price}</p>
-                  <p className=" text-gray-400">ID: {p.pId}</p>
+                  <p className=" text-gray-400">ID: {p._id}</p>
                 </div>
               ))}
             </div>
