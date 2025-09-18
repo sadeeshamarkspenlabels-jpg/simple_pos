@@ -43,7 +43,7 @@ export function AppSidebar() {
       <SidebarContent className="flex flex-col justify-between h-full">
         <SidebarGroup>
           <div className="px-6 py-5">
-            <h1 className="text-blue-700 font-extrabold text-2xl md:text-3xl">
+            <h1 className="text-[#00979a] font-extrabold text-2xl md:text-3xl">
               POS System
             </h1>
           </div>
@@ -55,10 +55,10 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    className="flex items-center gap-4 py-6 px-6 rounded-lg hover:bg-blue-100 transition-colors duration-200"
+                    className="flex items-center gap-4 py-6 px-6 rounded-lg hover:bg-[#C2F9FF] transition-colors duration-200"
                   >
                     <a href={item.url} className="flex items-center gap-4">
-                      <item.icon className="w-6 h-6 text-blue-600" />
+                      <item.icon className="w-6 h-6 text-[#008284] " />
                       <span className="text-gray-800 font-medium text-lg md:text-xl">
                         {item.title}
                       </span>

@@ -181,7 +181,7 @@ const UserPage = () => {
 
         {loading ? (
           <div className="w-12 mx-auto mt-16">
-            <Loader color="blue" />
+            <Loader color="#008284" />
           </div>
         ) : (
           <Card>
@@ -286,7 +286,7 @@ const UserPage = () => {
                 />
                 <Button
                   type="submit"
-                  className="w-full bg-blue-700 hover:bg-blue-800"
+                  className="w-full "
                 >
                   {createLoading ? <Loader /> : "Create"}
                 </Button>

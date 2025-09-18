@@ -234,7 +234,7 @@ const Report = () => {
         <CardContent>
           {loading ? (
             <div className=" w-[80px] mx-auto">
-              <Loader color="blue"/>
+              <Loader color="#008284"/>
             </div>
           ) : error ? (
             <p className="text-red-500">{error}</p>

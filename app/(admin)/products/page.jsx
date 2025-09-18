@@ -217,7 +217,7 @@ const ProductPage = () => {
 
         {loading ? (
           <div className="w-12 mx-auto mt-16">
-            <Loader color="blue" />
+            <Loader color="#008284" />
           </div>
         ) : (
           <ScrollArea className="h-[70vh]">
@@ -313,7 +313,7 @@ const ProductPage = () => {
                 />
                 <Button
                   type="submit"
-                  className="w-full bg-blue-700 hover:bg-blue-800"
+                  className="w-full"
                 >
                   {createLoading ? <Loader /> : "Add"}
                 </Button>
@@ -359,7 +359,7 @@ const ProductPage = () => {
                 />
                 <Button
                   type="submit"
-                  className="w-full bg-blue-700 hover:bg-blue-800"
+                  className="w-full"
                 >
                   {updateLoading ? <Loader /> : "Add"}
                 </Button>

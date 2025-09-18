@@ -204,7 +204,7 @@ export default function CashierPage() {
                   className="p-4 border rounded shadow hover:bg-gray-100 cursor-pointer"
                   onClick={() => addToCart(p)}
                 >
-                  <h2 className="font-semibold">{p.name}</h2>
+                  <h2 className="font-semibold text-[30px]">{p.name}</h2>
                   <p>Rs.{p.price}</p>
                   <p className=" text-gray-400">ID: {p._id}</p>
                   {p.stock && (
@@ -226,7 +226,7 @@ export default function CashierPage() {
               <Printer
                 onClick={() => setIsOpen(true)}
                 size={40}
-                className=" text-white bg-blue-500 p-2 rounded-full cursor-pointer hover:bg-white border border-blue-500 hover:text-blue-500 duration-300"
+                className=" text-white bg-[#008284]  p-2 rounded-full cursor-pointer hover:bg-white border border-blue-500 hover:text-blue-500 duration-300"
               />
               <LogOut
                 onClick={handleLogout}

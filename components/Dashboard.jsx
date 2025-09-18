@@ -90,7 +90,7 @@ const Dashboard = () => {
     <section>
       {loading ? (
         <div className=" w-[80px] mx-auto mt-24">
-          <Loader color="blue"/>
+          <Loader color="#008284"/>
         </div>
       ) : (
         <div className="p-6 space-y-6">
