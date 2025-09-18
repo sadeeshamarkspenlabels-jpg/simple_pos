@@ -17,6 +17,8 @@ import {
 import { Download } from "lucide-react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import Loader from "@/components/loader";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Report = () => {
   const [sales, setSales] = useState([]);
@@ -231,13 +233,16 @@ const Report = () => {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p>Loading sales...</p>
+            <div className=" w-[80px] mx-auto">
+              <Loader color="blue"/>
+            </div>
           ) : error ? (
             <p className="text-red-500">{error}</p>
           ) : filteredSales.length === 0 ? (
             <p>No sales found for the selected filters.</p>
           ) : (
-            <Table>
+            <ScrollArea className="h-[80vh]">
+              <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Invoice ID</TableHead>
@@ -269,6 +274,7 @@ const Report = () => {
                 ))}
               </TableBody>
             </Table>
+            </ScrollArea>
           )}
         </CardContent>
       </Card>

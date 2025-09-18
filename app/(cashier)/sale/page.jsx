@@ -29,24 +29,25 @@ export default function CashierPage() {
   const [reprintLoading, setReprintLoading] = useState(false);
   const [reprintId, setReprintId] = useState("");
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const savedToken = localStorage.getItem("token");
-      if (!savedToken) {
-        router.push("/login");
-        return;
-      }
-      setToken(savedToken);
+  const fetchProducts = async () => {
+    const savedToken = localStorage.getItem("token");
+    if (!savedToken) {
+      router.push("/login");
+      return;
+    }
+    setToken(savedToken);
 
-      try {
-        const res = await axios.get("/api/products", {
-          headers: { Authorization: `Bearer ${savedToken}` },
-        });
-        setProducts(res.data);
-      } catch (err) {
-        console.error("Error fetching products:", err);
-      }
-    };
+    try {
+      const res = await axios.get("/api/products", {
+        headers: { Authorization: `Bearer ${savedToken}` },
+      });
+      setProducts(res.data);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+    }
+  };
+
+  useEffect(() => {
     fetchProducts();
   }, []);
 
@@ -129,9 +130,11 @@ export default function CashierPage() {
       setChangeDue(0);
 
       // Print only the receipt
+       fetchProducts();
       setTimeout(() => window.print(), 300);
     } catch (err) {
-      console.error("Error completing sale:", err);
+      //console.error("Error completing sale:", err);
+      toast.error(err.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -204,11 +207,11 @@ export default function CashierPage() {
                   <h2 className="font-semibold">{p.name}</h2>
                   <p>Rs.{p.price}</p>
                   <p className=" text-gray-400">ID: {p._id}</p>
-                  {
-                    p.stock && (
-                      <p className=" text-gray-400 text-[12px]">Stock: {p.stock}</p>
-                    )
-                  }
+                  {p.stock && (
+                    <p className=" text-gray-400 text-[12px]">
+                      Stock: {p.stock}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>

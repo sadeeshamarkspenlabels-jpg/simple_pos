@@ -11,6 +11,11 @@ export const productValidate = z.object({
   stock: z.string().nonempty("Stock is Required")
 })
 
+export const stockValidate = z.object({
+  id: z.string().nonempty("ID is Required"),
+  stock: z.string().nonempty("Stock is Required")
+})
+
 export const userValidate = z.object({
   username: z.string().nonempty("Username is Required"),
   password: z.string().nonempty("Password is Required"),

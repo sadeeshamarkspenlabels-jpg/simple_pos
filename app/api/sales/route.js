@@ -42,10 +42,12 @@ export async function POST(req) {
 
   // 🔒 Step 1: Extract token from Authorization header
   const authHeader = req.headers.get("authorization");
-  if (!authHeader) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!authHeader)
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
   const token = authHeader.split(" ")[1];
-  if (!token) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!token)
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
   let decoded;
   try {
@@ -74,6 +76,12 @@ export async function POST(req) {
     }
 
     const qty = item.quantity || 1;
+
+    // ❗ Step 3a: Check stock availability
+    if (product.stock != null && product.stock < qty) {
+      return NextResponse.json({ message: `Not enough stock for product: ${product.name}` }, { status: 400 });
+    }
+
     total += product.price * qty;
 
     saleItems.push({
@@ -83,24 +91,27 @@ export async function POST(req) {
       price: product.price,
       quantity: qty,
     });
-     console.log(product._id);
+
+    // 🔽 Step 3b: Decrease product stock
+    if (product.stock != null) {
+      product.stock -= qty;
+      await product.save();
+    }
   }
- 
-  
+
   // 💾 Step 4: Save sale
   const sale = await Sale.create({
     items: saleItems,
     total,
     cashier: decoded.username,
     cashPaid: Number(cash),
-    cashDue: Number(cashDue)
+    cashDue: Number(cashDue),
   });
-  console.log(saleItems);
-  
 
   // ✅ Step 5: Return response
   return NextResponse.json({
-    message: "Sale  successfully",
+    message: "Sale recorded successfully",
     sale,
   });
 }
+

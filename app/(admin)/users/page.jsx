@@ -226,7 +226,7 @@ const UserPage = () => {
 
       {/* Compact Create User Form */}
       <div className="md:w-1/3 flex justify-center">
-        <Card className="w-full max-w-[400px]">
+        <Card className="w-full max-w-[400px] self-start">
           <CardHeader>
             <CardTitle>Create User</CardTitle>
           </CardHeader>

@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { productValidate } from "@/utils/validations";
+import { productValidate, stockValidate } from "@/utils/validations";
 import {
   Form,
   FormControl,
@@ -34,6 +34,7 @@ const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [createLoading, setCreateLoading] = useState(false);
+  const [updateLoading, setUpdateLoading] = useState(false)
   const [loading, setLoading] = useState(false);
 
   const [searchName, setSearchName] = useState("");
@@ -51,6 +52,15 @@ const ProductPage = () => {
       price: "",
     },
   });
+
+    const form2 = useForm({
+    resolver: zodResolver(stockValidate),
+    defaultValues: {
+      id: "",
+      stock: "",
+    },
+  });
+
 
   const fetchData = async () => {
     setLoading(true);
@@ -109,6 +119,26 @@ const ProductPage = () => {
       }
     );
   };
+
+  const onUpdate = async(data) => {
+    const token = localStorage.getItem("token");
+    setUpdateLoading(true);
+    try {
+      await axios.put(
+        "/api/products",
+        { id: data.id, stock: data.stock},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("Stock Added Successfully");
+      form2.reset();
+      fetchData();
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Failed to add stock");
+    } finally {
+      setUpdateLoading(false);
+    }
+  }
 
   // Filter products
   const applyFilters = () => {
@@ -231,7 +261,8 @@ const ProductPage = () => {
 
       {/* Compact Add Product Form */}
       <div className="md:w-1/3 flex justify-center self-start">
-        <Card className="w-full max-w-[400px]">
+        <div className=" w-full">
+          <Card className="w-full max-w-[400px]">
           <CardHeader>
             <CardTitle>Add Product</CardTitle>
           </CardHeader>
@@ -290,6 +321,54 @@ const ProductPage = () => {
             </Form>
           </CardContent>
         </Card>
+        <Card className="w-full max-w-[400px] mt-8">
+          <CardHeader>
+            <CardTitle>Add Stock</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Form {...form2}>
+              <form
+                onSubmit={form2.handleSubmit(onUpdate)}
+                className="flex flex-col gap-4"
+              >
+                <FormField
+                  control={form2.control}
+                  name="id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product ID</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form2.control}
+                  name="stock"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Stock</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="submit"
+                  className="w-full bg-blue-700 hover:bg-blue-800"
+                >
+                  {updateLoading ? <Loader /> : "Add"}
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+        </div>
+        
       </div>
     </section>
   );
