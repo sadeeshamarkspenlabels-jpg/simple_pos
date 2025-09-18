@@ -286,7 +286,7 @@ const UserPage = () => {
                 />
                 <Button
                   type="submit"
-                  className="w-full bg-blue-700 hover:bg-blue-800"
+                  className="w-full "
                 >
                   {createLoading ? <Loader /> : "Create"}
                 </Button>
