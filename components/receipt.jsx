@@ -61,7 +61,19 @@ export default function ThermalReceipt({ sale }) {
         </p>
       </div>
 
-      <div className=" flex justify-center mt-8">
+      <div className=" flex justify-between mt-4">
+        <p className="text-right">Cash Paid:</p>
+        <div>
+          <p className="text-right">
+          {sale.cashPaid.toFixed(2)}
+        </p>
+        <p className="text-right">
+          {sale.cashDue.toFixed(2)}
+        </p>
+        </div>
+      </div>
+
+      <div className=" flex justify-center mt-4">
         <Barcode id={sale._id}/>
       </div>
 

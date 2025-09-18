@@ -15,6 +15,8 @@ const SaleSchema = new mongoose.Schema({
   total: { type: Number, required: true },
   cashier: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
+  cashPaid: { type: Number, required: true },
+  cashDue: { type: Number, required: true },
 });
 
 // Pre-save hook to generate INVxxxx ID

@@ -116,12 +116,13 @@ export default function CashierPage() {
         {
           items: cart,
           cashier: "Admin",
-          cashReceived: cash,
-          changeDue: cash - total,
+          cash: cash,
+          cashDue: cash - total,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
+      console.log(res);
+      
       setSale(res.data.sale);
       setCart([]);
       setCashReceived("");

@@ -1,13 +1,10 @@
 "use client";
 import {
-  Calendar,
-  Home,
-  Search,
-  Settings,
   Box,
   User,
-  LogOut,
-  Hand
+  ChartLine,
+  FileText,
+  BadgeDollarSign,
 } from "lucide-react";
 
 import {
@@ -16,72 +13,55 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
-import Loader from "./loader";
 
-// Menu items.
+// Menu items
 const items = [
-  //   {
-  //     title: "Home",
-  //     url: "/",
-  //     icon: Home,
-  //   },
-  {
-    title: "Products",
-    url: "/products",
-    icon: Box,
-  },
-  {
-    title: "Users",
-    url: "/users",
-    icon: User,
-  },
-  {
-    title: "Sales",
-    url: "/sales",
-    icon: Hand,
-  },
-  // {
-  //   title: "Settings",
-  //   url: "#",
-  //   icon: Settings,
-  // },
+  { title: "Dashboard", url: "/", icon: ChartLine },
+  { title: "Sales", url: "/sales", icon: BadgeDollarSign },
+  { title: "Products", url: "/products", icon: Box },
+  { title: "Users", url: "/users", icon: User },
+  { title: "Reports", url: "/report", icon: FileText },
 ];
 
 export function AppSidebar() {
   const router = useRouter();
 
-  const handleLogout = async () => {
-    try {
-      localStorage.clear("token");
-      localStorage.clear("role");
-      router.push("/login"); // redirect to login page
-    } catch (err) {
-      console.error("Logout failed", err);
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    router.push("/login");
   };
+
   return (
-    <Sidebar>
-      <SidebarContent className=" shadow-2xl">
+    <Sidebar className="h-screen bg-white shadow-lg border-r border-gray-200">
+      <SidebarContent className="flex flex-col justify-between h-full">
         <SidebarGroup>
-          <div className="p-4">
-            <h1 className=" text-blue-700 font-bold text-3xl">POS System</h1>
+          <div className="px-6 py-5">
+            <h1 className="text-blue-700 font-extrabold text-2xl md:text-3xl">
+              POS System
+            </h1>
           </div>
-          <hr />
-          <SidebarGroupContent className="mt-8 ">
-            <SidebarMenu className=" gap-5">
+          <hr className="border-gray-300" />
+
+          <SidebarGroupContent className="mt-12">
+            <SidebarMenu className="flex flex-col gap-6">
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="p-6 hover:bg-blue-200">
-                    <a href={item.url}>
-                      <item.icon />
-                      <span className=" text-[18px]">{item.title}</span>
+                  <SidebarMenuButton
+                    asChild
+                    className="flex items-center gap-4 py-6 px-6 rounded-lg hover:bg-blue-100 transition-colors duration-200"
+                  >
+                    <a href={item.url} className="flex items-center gap-4">
+                      <item.icon className="w-6 h-6 text-blue-600" />
+                      <span className="text-gray-800 font-medium text-lg md:text-xl">
+                        {item.title}
+                      </span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -89,12 +69,16 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        <SidebarFooter className="p-4">
+          <Button
+            className="w-full bg-red-600 hover:bg-red-500 text-white py-3"
+            onClick={handleLogout}
+          >
+            Log Out
+          </Button>
+        </SidebarFooter>
       </SidebarContent>
-      <SidebarFooter>
-        <Button className="bg-red-600 hover:bg-red-400" onClick={handleLogout}>
-          Log Out
-        </Button>
-      </SidebarFooter>
     </Sidebar>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -17,17 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -35,7 +25,6 @@ import { userValidate } from "@/utils/validations";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -49,8 +38,12 @@ import { Trash } from "lucide-react";
 
 const UserPage = () => {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [createLoading, setCreateLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [searchName, setSearchName] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
 
   const router = useRouter();
 
@@ -72,37 +65,13 @@ const UserPage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(res);
       setUsers(res.data);
+      setFilteredUsers(res.data); // default all
     } catch (error) {
       console.log(error);
-      toast.error("Error Getting users");
+      toast.error("Error fetching users");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const onSubmit = async (values) => {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    setCreateLoading(true);
-    const token = localStorage.getItem("token");
-    try {
-      const { userName, password, role } = values;
-
-      const res = await axios.post("/api/auth/register", values, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setCreateLoading(false);
-      toast.success("User Created Success");
-      console.log(res);
-      fetchData();
-    } catch (error) {
-      toast.error(error.response.data.message);
-      console.log(error);
-      setCreateLoading(false);
     }
   };
 
@@ -115,72 +84,158 @@ const UserPage = () => {
     fetchData();
   }, []);
 
-  const handleDelete = async(id) => {
+  const applyFilters = () => {
+    let filtered = [...users];
+
+    if (searchName.trim() !== "") {
+      filtered = filtered.filter((u) =>
+        u.username.toLowerCase().includes(searchName.toLowerCase())
+      );
+    }
+
+    if (roleFilter) {
+      filtered = filtered.filter((u) => u.role === roleFilter);
+    }
+
+    setFilteredUsers(filtered);
+  };
+
+  const clearFilters = () => {
+    setSearchName("");
+    setRoleFilter("");
+    setFilteredUsers([...users]);
+  };
+
+  const onSubmit = async (values) => {
+    setCreateLoading(true);
+    const token = localStorage.getItem("token");
+    try {
+      await axios.post("/api/auth/register", values, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success("User created successfully");
+      form.reset();
+      fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+      console.log(error);
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
     const token = localStorage.getItem("token");
     toast.promise(
       axios.delete(`/api/auth/users/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       }),
       {
         loading: "Deleting User...",
-        success: (res) => {
-          fetchData(); // ✅ call your function after success
+        success: () => {
+          fetchData();
           return "Deleted successfully!";
         },
-        error: (error) =>
-          error.response?.data?.message || "Something went wrong!",
+        error: (error) => error.response?.data?.message || "Something went wrong!",
       }
     );
-  }
+  };
 
   return (
-    <section className=" flex md:flex-row flex-col w-[100%] justify-between md:px-8 md:pt-8">
-      <div className="md:w-[40%]">
+    <section className="p-6 flex flex-col md:flex-row gap-6">
+      {/* Users Table & Filters */}
+      <div className="md:w-2/3 flex flex-col gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Filters</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2 items-end">
+            <div>
+              <Input
+                placeholder="Search by username"
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
+                className="w-40"
+              />
+            </div>
+            <div className="w-40">
+              <Select
+                onValueChange={(val) => setRoleFilter(val)}
+                value={roleFilter}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Filter by role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="cashier">Cashier</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button onClick={applyFilters}>Apply</Button>
+            <Button variant="outline" onClick={clearFilters}>
+              Clear
+            </Button>
+          </CardContent>
+        </Card>
+
         {loading ? (
-          <div className="w-[50px] mx-auto mt-16">
-            <Loader color={"blue"} />
+          <div className="w-12 mx-auto mt-16">
+            <Loader color="blue" />
           </div>
         ) : (
-          <Table>
-            <TableCaption>Users</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Username</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.map((user, i) => (
-                <TableRow key={i}>
-                  <TableCell>{user.username}</TableCell>
-                  <TableCell>{user.role}</TableCell>
-                  <TableCell>
-                    <Button
-                      onClick={() => handleDelete(user._id)}
-                      className=" bg-red-500 hover:bg-red-600"
-                    >
-                      <Trash />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <Card>
+            <CardHeader>
+              <CardTitle>Users</CardTitle>
+            </CardHeader>
+            <CardContent className="overflow-x-auto">
+              <Table>
+                <TableCaption>
+                  {filteredUsers.length > 0
+                    ? `Showing ${filteredUsers.length} users`
+                    : "No users found"}
+                </TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Username</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredUsers.map((user, i) => (
+                    <TableRow key={i}>
+                      <TableCell>{user.username}</TableCell>
+                      <TableCell>{user.role}</TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => handleDelete(user._id)}
+                          className="bg-red-500 hover:bg-red-600 p-2"
+                        >
+                          <Trash size={16} />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         )}
       </div>
-      <div className="flex justify-end  md:w-[60%] md:ml-auto mt-8 md:mt-0">
-        <Card className="w-full max-w-[600px] flex ">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <CardHeader>
-                <h1 className=" font-black text-center text-[20px]">
-                  Create New User
-                </h1>
-              </CardHeader>
-              <CardContent className=" flex flex-col gap-2">
+
+      {/* Compact Create User Form */}
+      <div className="md:w-1/3 flex justify-center">
+        <Card className="w-full max-w-[400px]">
+          <CardHeader>
+            <CardTitle>Create User</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col gap-4"
+              >
                 <FormField
                   control={form.control}
                   name="username"
@@ -201,7 +256,7 @@ const UserPage = () => {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input {...field} type="password"/>
+                        <Input {...field} type="password" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -215,13 +270,11 @@ const UserPage = () => {
                       <FormLabel>Role</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select the Role" />
-                          </SelectTrigger>
-                        </FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select role" />
+                        </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="admin">Admin</SelectItem>
                           <SelectItem value="cashier">Cashier</SelectItem>
@@ -233,14 +286,13 @@ const UserPage = () => {
                 />
                 <Button
                   type="submit"
-                  className="w-full bg-blue-700 hover:bg-blue-800 mt-4"
+                  className="w-full bg-blue-700 hover:bg-blue-800"
                 >
                   {createLoading ? <Loader /> : "Create"}
                 </Button>
-              </CardContent>
-              <CardFooter className="flex-col gap-2"></CardFooter>
-            </form>
-          </Form>
+              </form>
+            </Form>
+          </CardContent>
         </Card>
       </div>
     </section>

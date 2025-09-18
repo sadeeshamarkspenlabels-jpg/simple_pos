@@ -58,7 +58,7 @@ export async function POST(req) {
   }
 
   // 📦 Step 2: Get sale data from request body
-  const { items } = await req.json();
+  const { items, cash, cashDue } = await req.json();
   if (!items || !Array.isArray(items) || items.length === 0) {
     return NextResponse.json({ message: "No items in sale" }, { status: 400 });
   }
@@ -92,13 +92,15 @@ export async function POST(req) {
     items: saleItems,
     total,
     cashier: decoded.username,
+    cashPaid: Number(cash),
+    cashDue: Number(cashDue)
   });
   console.log(saleItems);
   
 
   // ✅ Step 5: Return response
   return NextResponse.json({
-    message: "Sale created successfully",
+    message: "Sale  successfully",
     sale,
   });
 }
