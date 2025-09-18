@@ -17,6 +17,7 @@ import {
   BarChart,
   Bar,
 } from "recharts";
+import Loader from "./loader";
 
 const Dashboard = () => {
   const [sales, setSales] = useState([]);
@@ -40,7 +41,6 @@ const Dashboard = () => {
     fetchSales();
   }, []);
 
-  if (loading) return <p className="p-6">Loading dashboard...</p>;
 
   // 📊 Process data for charts
   const revenueByDate = sales.reduce((acc, sale) => {
@@ -88,7 +88,14 @@ const Dashboard = () => {
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   return (
-    <div className="p-6 space-y-6">
+    <section>
+      {
+        loading ? (
+          <div>
+            <Loader />
+          </div>
+        ) : (
+          <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold">Dashboard</h1>
 
       {/* Summary Cards */}
@@ -180,6 +187,9 @@ const Dashboard = () => {
         </CardContent>
       </Card>
     </div>
+        )
+      }
+    </section>
   );
 };
 

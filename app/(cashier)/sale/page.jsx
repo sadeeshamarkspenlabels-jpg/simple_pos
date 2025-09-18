@@ -26,8 +26,8 @@ export default function CashierPage() {
   const [changeDue, setChangeDue] = useState(0);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [reprintLoading, setReprintLoading] = useState(false)
-  const [reprintId, setReprintId] = useState("")
+  const [reprintLoading, setReprintLoading] = useState(false);
+  const [reprintId, setReprintId] = useState("");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -87,7 +87,7 @@ export default function CashierPage() {
 
   const addByProductId = () => {
     const product = products.find(
-      (p) => p.pId === Number(productIdInput.trim())
+      (p) => p._id === Number(productIdInput.trim())
     );
     if (product) {
       addToCart(product);
@@ -122,7 +122,7 @@ export default function CashierPage() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       console.log(res);
-      
+
       setSale(res.data.sale);
       setCart([]);
       setCashReceived("");
@@ -148,40 +148,40 @@ export default function CashierPage() {
   );
 
   const onClose = () => {
-    setIsOpen(false)
-  }
+    setIsOpen(false);
+  };
 
-  const handleReprint = async() => {
-    if(reprintId === "") return toast.error("Invoice Number is empty");
+  const handleReprint = async () => {
+    if (reprintId === "") return toast.error("Invoice Number is empty");
     setReprintLoading(true);
     try {
-      const res = await axios.get(
-        `/api/sales/${reprintId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await axios.get(`/api/sales/${reprintId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       console.log(res);
-      setSale(res.data.sale)
+      setSale(res.data.sale);
       setTimeout(() => window.print(), 300);
       onClose();
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message)
+      toast.error(error.response.data.message);
     } finally {
-      setReprintLoading(false)
-      setReprintId("")
+      setReprintLoading(false);
+      setReprintId("");
     }
-  }
+  };
 
   return (
     <div>
       {/* POS UI - hidden in print */}
       <div className="flex md:flex-row flex-col h-screen no-print">
         <PopUp isOpen={isOpen} onClose={onClose} title="Reprint">
-          <Input placeholder="Invoie Number : INV0000" onChange={(e) => setReprintId(e.target.value)}/>
+          <Input
+            placeholder="Invoie Number : INV0000"
+            onChange={(e) => setReprintId(e.target.value)}
+          />
           <Button className="w-full mt-4" onClick={handleReprint}>
-            {
-              reprintLoading ? <Loader /> : "Print"
-            }
+            {reprintLoading ? <Loader /> : "Print"}
           </Button>
         </PopUp>
         {/* Products List */}
@@ -203,7 +203,12 @@ export default function CashierPage() {
                 >
                   <h2 className="font-semibold">{p.name}</h2>
                   <p>Rs.{p.price}</p>
-                  <p className=" text-gray-400">ID: {p.pId}</p>
+                  <p className=" text-gray-400">ID: {p._id}</p>
+                  {
+                    p.stock && (
+                      <p className=" text-gray-400 text-[12px]">Stock: {p.stock}</p>
+                    )
+                  }
                 </div>
               ))}
             </div>
@@ -215,12 +220,16 @@ export default function CashierPage() {
           <div className=" flex justify-between pb-4">
             <h1 className="text-xl font-bold mb-2">Cart</h1>
             <div className=" flex gap-3">
-              <Printer onClick={() => setIsOpen(true)} size={40} className=" text-white bg-blue-500 p-2 rounded-full cursor-pointer hover:bg-white border border-blue-500 hover:text-blue-500 duration-300"/>
+              <Printer
+                onClick={() => setIsOpen(true)}
+                size={40}
+                className=" text-white bg-blue-500 p-2 rounded-full cursor-pointer hover:bg-white border border-blue-500 hover:text-blue-500 duration-300"
+              />
               <LogOut
-              onClick={handleLogout}
-              className=" text-white bg-red-500 p-2 rounded-full cursor-pointer hover:bg-white border border-red-500 hover:text-red-500 duration-300"
-              size={40}
-            />
+                onClick={handleLogout}
+                className=" text-white bg-red-500 p-2 rounded-full cursor-pointer hover:bg-white border border-red-500 hover:text-red-500 duration-300"
+                size={40}
+              />
             </div>
           </div>
 
@@ -230,6 +239,9 @@ export default function CashierPage() {
               placeholder="Product ID"
               value={productIdInput}
               onChange={(e) => setProductIdInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") addByProductId();
+              }}
             />
             <Button onClick={addByProductId}>Add</Button>
           </div>

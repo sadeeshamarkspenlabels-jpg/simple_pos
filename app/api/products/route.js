@@ -27,17 +27,19 @@ export async function POST(req) {
     return NextResponse.json({ message: "Invalid token" }, { status: 401 });
   }
 
-  const { name, price, id } = await req.json();
+  const { name, price, stock } = await req.json();
   if (!name || !price) return NextResponse.json({ message: "Name and price required" }, { status: 400 });
   try {
   const product = await Product.create({
     name,
     price: Number(price),
-    pId: Number(id),
+    stock: Number(stock)
   });
 
   return NextResponse.json(product, { status: 201 });
 } catch (error) {
+  console.log(error);
+  
   return NextResponse.json(
     { message: "Duplicate Product ID" },
     { status: 500 }

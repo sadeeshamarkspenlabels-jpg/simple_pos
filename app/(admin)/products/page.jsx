@@ -46,8 +46,8 @@ const ProductPage = () => {
   const form = useForm({
     resolver: zodResolver(productValidate),
     defaultValues: {
-      id: "",
       name: "",
+      stock: "",
       price: "",
     },
   });
@@ -81,7 +81,7 @@ const ProductPage = () => {
     try {
       await axios.post(
         "/api/products",
-        { id: values.id, name: values.name, price: values.price },
+        { name: values.name, price: values.price, stock: values.stock },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success("Product Added Successfully");
@@ -121,7 +121,7 @@ const ProductPage = () => {
     }
 
     if (searchId.trim()) {
-      filtered = filtered.filter((p) => p.pId.toString().includes(searchId));
+      filtered = filtered.filter((p) => p._id.toString().includes(searchId));
     }
 
     if (minPrice) {
@@ -202,15 +202,17 @@ const ProductPage = () => {
                   <TableHead>ID</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Price (Rs.)</TableHead>
+                  <TableHead>Stock</TableHead>
                   <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredProducts.map((product, i) => (
                   <TableRow key={i}>
-                    <TableCell>{product.pId}</TableCell>
+                    <TableCell>{product._id}</TableCell>
                     <TableCell>{product.name}</TableCell>
                     <TableCell>{product.price}</TableCell>
+                    <TableCell>{product.stock}</TableCell>
                     <TableCell>
                       <Button
                         onClick={() => handleDelete(product._id)}
@@ -241,10 +243,10 @@ const ProductPage = () => {
               >
                 <FormField
                   control={form.control}
-                  name="id"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>ID</FormLabel>
+                      <FormLabel>Name</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -254,10 +256,10 @@ const ProductPage = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="stock"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel>Stock</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
