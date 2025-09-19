@@ -149,7 +149,7 @@ const SalesPage = () => {
       {/* Sales Table */}
       {loading ? (
         <div className="w-[50px] mx-auto mt-16">
-          <Loader color="blue" />
+          <Loader color="#008284" />
         </div>
       ) : (
         <Card>

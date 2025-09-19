@@ -138,6 +138,12 @@
   }
 }
 
+.dash-line {
+  border: none;
+  border-top: 1px dashed #555; /* fallback */
+  height: 1px;
+}
+
 
 
 

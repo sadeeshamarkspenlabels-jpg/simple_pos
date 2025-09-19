@@ -188,20 +188,20 @@ export default function CashierPage() {
           </Button>
         </PopUp>
         {/* Products List */}
-        <div className="md:w-2/3 p-4 border-r">
+        <div className="md:w-2/3 p-4 border-r border-gray-300 dark:border-gray-600">
           <h1 className="text-xl font-bold mb-2">Products</h1>
           <Input
             placeholder="Search product..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="mb-2"
+            className="mb-2 border border-gray-300 dark:border-gray-600"
           />
           <ScrollArea className="h-[85vh]">
             <div className="grid grid-cols-3 gap-4">
               {filteredProducts.map((p) => (
                 <div
                   key={p._id}
-                  className="p-4 border rounded shadow hover:bg-gray-100 cursor-pointer"
+                  className="p-4 border rounded shadow border-gray-300 dark:border-gray-600 dark:hover:bg-gray-900 cursor-pointer"
                   onClick={() => addToCart(p)}
                 >
                   <h2 className="font-semibold text-[30px]">{p.name}</h2>
@@ -226,7 +226,7 @@ export default function CashierPage() {
               <Printer
                 onClick={() => setIsOpen(true)}
                 size={40}
-                className=" text-white bg-[#008284]  p-2 rounded-full cursor-pointer hover:bg-white border border-blue-500 hover:text-blue-500 duration-300"
+                className=" text-white bg-[#008284]  p-2 rounded-full cursor-pointer hover:bg-white border border-[#008284] hover:text-[#008284] duration-300"
               />
               <LogOut
                 onClick={handleLogout}
@@ -245,6 +245,7 @@ export default function CashierPage() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") addByProductId();
               }}
+              className="border-gray-300 dark:border-gray-600"
             />
             <Button onClick={addByProductId}>Add</Button>
           </div>
@@ -298,7 +299,7 @@ export default function CashierPage() {
 
           {/* Cash Received & Change Due */}
 
-          <div className="mt-4 border-t pt-2">
+          <div className="mt-4 border-t  border-gray-300 dark:border-gray-600 pt-2">
             <p className="text-lg font-bold">Total: Rs.{total.toFixed(2)}</p>
             <div className="mt-4">
               <Input

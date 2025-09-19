@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 // Menu items
 const items = [
@@ -39,7 +40,7 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar className="h-screen bg-white shadow-lg border-r border-gray-200">
+    <Sidebar className="h-screen bg-white shadow-lg border-r border-gray-200 dark:border-gray-500">
       <SidebarContent className="flex flex-col justify-between h-full">
         <SidebarGroup>
           <div className="px-6 py-5">
@@ -55,14 +56,14 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    className="flex items-center gap-4 py-6 px-6 rounded-lg hover:bg-[#C2F9FF] transition-colors duration-200"
+                    className="flex items-center gap-4 py-6 px-6 rounded-lg hover:bg-[#C2F9FF] dark:hover:bg-gray-600 transition-colors duration-200"
                   >
-                    <a href={item.url} className="flex items-center gap-4">
+                    <Link href={item.url} className="flex items-center gap-4">
                       <item.icon className="w-6 h-6 text-[#008284] " />
-                      <span className="text-gray-800 font-medium text-lg md:text-xl">
+                      <span className="text-gray-800 dark:text-white font-medium text-lg md:text-xl">
                         {item.title}
                       </span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

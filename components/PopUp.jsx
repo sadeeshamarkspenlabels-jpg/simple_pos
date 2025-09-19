@@ -9,7 +9,7 @@ const PopUp = ( {isOpen, onClose, children, title }) => {
       }`}
     >
       <div
-        className={`bg-white rounded-lg shadow-lg px-4 py-2 w-96 relative transform transition-transform duration-300 ${
+        className={`bg-white dark:bg-gray-900 rounded-lg shadow-lg px-4 py-2 w-96 relative transform transition-transform duration-300 ${
           isOpen ? "translate-y-0 scale-100" : "-translate-y-10 scale-90"
         }`}
       >

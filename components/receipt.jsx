@@ -16,40 +16,71 @@ export default function ThermalReceipt({ sale }) {
       </div>
       {/* <p className="text-center">123 Main Street</p> */}
       <p className="text-center">Tel: 045-2263129</p>
-      <hr className="border-dashed border-gray-400 my-2" />
+      <svg width="100%" height="2">
+        <line
+          x1="0"
+          y1="1"
+          x2="100%"
+          y2="1"
+          stroke="black"
+          strokeWidth="1"
+          strokeDasharray="4,4"
+        />
+      </svg>
 
       <div className=" my-4">
         {/* Sale Info */}
         <p>Bill No: {sale._id}</p>
         <p>Cashier: {sale.cashier}</p>
         <p>Date: {formatDate(sale.createdAt)}</p>
-        <hr className="border-dashed border-gray-400 my-2" />
+        <svg width="100%" height="2">
+          <line
+            x1="0"
+            y1="1"
+            x2="100%"
+            y2="1"
+            stroke="black"
+            strokeWidth="1"
+            strokeDasharray="4,4"
+          />
+        </svg>
       </div>
 
       <div className="mx-auto my-4">
-  {/* Header */}
-  <div className="grid grid-cols-[50px_1fr_30px_50px_60px] text-[13px] font-bold mb-2">
-    <h3>Code</h3>
-    <h3>Name</h3>
-    <h3>Qty</h3>
-    <h3>Rate</h3>
-    <h3>Price</h3>
-  </div>
+        {/* Header */}
+        <div className="grid grid-cols-[50px_1fr_30px_50px_60px] text-[13px] font-bold mb-2">
+          <h3>Code</h3>
+          <h3>Name</h3>
+          <h3>Qty</h3>
+          <h3>Rate</h3>
+          <h3>Price</h3>
+        </div>
 
-  {/* Items */}
-  {sale.items.map((item, i) => (
-    <div key={i} className="grid grid-cols-[50px_1fr_30px_50px_60px]">
-      <h3>{item._id}</h3>
-      <h3>{item.name}</h3>
-      <h3 className=" mx-auto">{item.quantity}</h3>
-      <h3 className=" mx-auto">{item.price}</h3>
-      <h3 className=" mx-auto">{(item.price * item.quantity).toFixed(2)}</h3>
-    </div>
-  ))}
-</div>
+        {/* Items */}
+        {sale.items.map((item, i) => (
+          <div key={i} className="grid grid-cols-[50px_1fr_30px_50px_60px]">
+            <h3>{item._id}</h3>
+            <h3>{item.name}</h3>
+            <h3 className=" mx-auto">{item.quantity}</h3>
+            <h3 className=" mx-auto">{item.price}</h3>
+            <h3 className=" mx-auto">
+              {(item.price * item.quantity).toFixed(2)}
+            </h3>
+          </div>
+        ))}
+      </div>
 
-
-      <hr className="border-dashed border-gray-400 my-2" />
+      <svg width="100%" height="2">
+        <line
+          x1="0"
+          y1="1"
+          x2="100%"
+          y2="1"
+          stroke="black"
+          strokeWidth="1"
+          strokeDasharray="4,4"
+        />
+      </svg>
 
       {/* Totals */}
       <div className=" flex justify-between">
@@ -64,20 +95,16 @@ export default function ThermalReceipt({ sale }) {
       <div className=" flex justify-between mt-4">
         <div>
           <p className="text-right">Cash:</p>
-        <p className="text-right">Change:</p>
+          <p className="text-right">Change:</p>
         </div>
         <div>
-          <p className="text-right">
-          {sale.cashPaid.toFixed(2)}
-        </p>
-        <p className="text-right">
-          {sale.cashDue.toFixed(2)}
-        </p>
+          <p className="text-right">{sale.cashPaid.toFixed(2)}</p>
+          <p className="text-right">{sale.cashDue.toFixed(2)}</p>
         </div>
       </div>
 
       <div className=" flex justify-center mt-4">
-        <Barcode id={sale._id}/>
+        <Barcode id={sale._id} />
       </div>
 
       {/* Footer */}
